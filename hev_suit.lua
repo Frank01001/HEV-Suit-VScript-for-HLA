@@ -1,14 +1,15 @@
---======================================================================--
--- Hazardous Environments Vehicle Mark IV Suit HL:A Script :: Frank01001--
---======================================================================--
+--==========================================================================--
+-- Hazardous Environments Vehicle Mark IV Suit HL:A Script :: by Frank01001 --
+--==========================================================================--
 
--- Version 1.0 :: Basic implementation. Still waiting for VScript documentation on UI
+-- Version 1.1 :: Fixes
 
 --=========--
 -- General --
 --=========--
 local isRunning = false
 local power = 0
+local lastWarning = ""
 
 --=============================
 -- Spawn is called by the engine whenever a new instance of an entity is created.  
@@ -16,7 +17,8 @@ local power = 0
 --=============================
 function Spawn() 
 	-- Registers a function to get called each time the entity updates, or "thinks"
-	thisEntity:SetContextThink(nil, SoundThink, 0)
+	thisEntity:SetContextThink(nil, UpdateFunc, 0)
+	
 	flLastTime = Time()
 end
 
@@ -28,6 +30,14 @@ function HEV_Bootup()
 	isRunning = true
 end
 
+-- Call to activate without long initialization sequence
+function HEV_BootupQuick()
+	ScheduleSound("hev_suit.bell", 0.2)
+	-- Custom sound, needs importing and inclusion in sound event
+	isRunning = true
+end
+
+-- Read health information if necessary
 function HEV_Health(delay)
 	local localPlayer = Entities:GetLocalPlayer()
 	local health
@@ -36,25 +46,32 @@ function HEV_Health(delay)
 		health = localPlayer:GetHealth()
 	end
 	
-	if health <= 6 then
+	if health <= 6 and lastWarning ~= "health_death" then
 		ScheduleSound("hev_suit.beep", 0.3 + delay)
 		ScheduleSound("hev_suit.beep", 0.3)
 		ScheduleSound("hev_suit.beep", 0.3)
 		ScheduleSound("hev_suit.near_death", 1.4)
-	elseif health <= 30 then
+		lastWarning = "health_death"
+		return
+	elseif health <= 30 and lastWarning ~= "health_critical" then
 		ScheduleSound("hev_suit.beep", 0.3 + delay)
 		ScheduleSound("hev_suit.beep", 0.3)
 		ScheduleSound("hev_suit.beep", 0.3)
 		ScheduleSound("hev_suit.health_critical", 0.8)
 		ScheduleSound("hev_suit.seek_medic", 3.0)
-	elseif health <= 50 then
+		lastWarning = "health_critical"
+		return
+	elseif health <= 50 and lastWarning ~= "health_dropping" and lastWarning ~= "health_critical" then
 		ScheduleSound("hev_suit.beep", 0.3 + delay)
 		ScheduleSound("hev_suit.beep", 0.3)
 		ScheduleSound("hev_suit.health_dropping", 1.0)
+		lastWarning = "health_dropping"
+		return
 	end
-
+	
 end
 
+-- Read a percetage
 function HEV_Number(num, delay)
 
 	local localPlayer = Entities:GetLocalPlayer()
@@ -104,7 +121,11 @@ end
 --=========================--
 local isFirstFracture = true
 
+-- Call from a trigger
 function HEV_Radiation()
+	if not isRunning then
+		return
+	end
 	--todo implement geiger counter
 	
 	local localPlayer = Entities:GetLocalPlayer()
@@ -114,14 +135,11 @@ function HEV_Radiation()
 		health = localPlayer:GetHealth()
 	end
 	
-	health = health - 20
-	localPlayer:SetHealth(health)
-	
-	ScheduleSound("hev_suit.blip", 0.1)
-	ScheduleSound("hev_suit.blip", 0.1)
-	ScheduleSound("hev_suit.blip", 0.1)
-	
-	if health > 50 then
+	if health > 50 and lastWarning ~= "radiation" then
+		lastWarning = "radiation"
+		ScheduleSound("hev_suit.blip", 0.1)
+		ScheduleSound("hev_suit.blip", 0.1)
+		ScheduleSound("hev_suit.blip", 0.1)
 		ScheduleSound("hev_suit.radiation_detected", 1.2)
 	else
 		HEV_Health(1.2)
@@ -129,6 +147,9 @@ function HEV_Radiation()
 end
 
 function HEV_Heat()
+	if not isRunning then
+		return
+	end
 	local localPlayer = Entities:GetLocalPlayer()
 	local health
 	
@@ -137,31 +158,30 @@ function HEV_Heat()
 		health = localPlayer:GetHealth()
 	end
 	
-	health = health - 20
-	localPlayer:SetHealth(health)
-	
-	ScheduleSound("hev_suit.blip", 0.3)
-	ScheduleSound("hev_suit.blip", 0.3)
+	if lastWarning ~= "heat" then
+		lastWarning = "heat"
+		ScheduleSound("hev_suit.blip", 0.3)
+		ScheduleSound("hev_suit.blip", 0.3)
+	end
 	HEV_Health(1.2)
 end
 
 function HEV_Biohazard()
+	if not isRunning then
+		return
+	end
 	local localPlayer = Entities:GetLocalPlayer()
 	local health
-	
 	
 	if localPlayer ~= nil then
 		health = localPlayer:GetHealth()
 	end
 	
-	health = health - 20
-	localPlayer:SetHealth(health)
-	
-	ScheduleSound("hev_suit.blip", 0.3)
-	ScheduleSound("hev_suit.blip", 0.3)
-	ScheduleSound("hev_suit.blip", 0.3)
-	
-	if health > 50 then
+	if health > 50 and lastWarning ~= "bio" then
+		lastWarning = "bio"
+		ScheduleSound("hev_suit.blip", 0.3)
+		ScheduleSound("hev_suit.blip", 0.3)
+		ScheduleSound("hev_suit.blip", 0.3)
 		ScheduleSound("hev_suit.biohazard_detected", 1.2)
 	else
 		HEV_Health(1.2)
@@ -169,6 +189,10 @@ function HEV_Biohazard()
 end
 
 function HEV_Electricity()
+	if not isRunning then
+		return
+	end
+	
 	local localPlayer = Entities:GetLocalPlayer()
 	local health
 
@@ -176,13 +200,12 @@ function HEV_Electricity()
 		health = localPlayer:GetHealth()
 	end
 	
-	health = health - 20
-	localPlayer:SetHealth(health)
+	lastHealth = health
 	
-	ScheduleSound("hev_suit.blip", 0.3)
-	ScheduleSound("hev_suit.blip", 0.3)
-	
-	if health > 50 then
+	if health > 50 and lastWarning ~= "shock" then
+		lastWarning = "shock"
+		ScheduleSound("hev_suit.blip", 0.3)
+		ScheduleSound("hev_suit.blip", 0.3)
 		ScheduleSound("hev_suit.warning", 1.5)
 		ScheduleSound("hev_suit.shock_damage", 1.2)
 	else
@@ -192,6 +215,10 @@ end
 
 -- Fall
 function HEV_MinFracture()
+	if not isRunning then
+		return
+	end
+	
 	ScheduleSound("hev_suit.boop", 0.3)
 	ScheduleSound("hev_suit.boop", 0.3)
 	ScheduleSound("hev_suit.boop", 0.3)
@@ -200,6 +227,10 @@ end
 
 -- Fall
 function HEV_MajFracture()
+	if not isRunning then
+		return
+	end
+	
 	ScheduleSound("hev_suit.boop", 0.3)
 	ScheduleSound("hev_suit.boop", 0.3)
 	ScheduleSound("hev_suit.boop", 0.3)
@@ -217,37 +248,85 @@ end
 
 -- Bullets
 function HEV_BloodLoss()
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.blood_loss", 1.2)
+	if not isRunning then
+		return
+	end
+	
+	if lastWarning ~= "blood_loss" then
+		lastWarning = "blood_loss"
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.blood_loss", 1.2)
+	end
+	
 	HEV_Health(4.0)
 end
 
 -- Headcrab
 function HEV_MinLaceration()
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.minor_lacerations", 1.2)
+	if not isRunning then
+		return
+	end
+	
+	if lastWarning ~= "laceration" then
+		lastWarning = "laceration"
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.minor_lacerations", 1.2)
+	end
+	
 	HEV_Health(4.0)
 end
 
 -- Big slash
 function HEV_MajLaceration()
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.major_lacerations", 1.2)
+	if not isRunning then
+		return
+	end
+	
+	if lastWarning ~= "laceration" then
+		lastWarning = "laceration"
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.major_lacerations", 1.2)
+		
+	end
 	HEV_Health(4.0)
 end
 
 -- Sonic shockwave
 function HEV_Bleed()
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.boop", 0.3)
-	ScheduleSound("hev_suit.internal_bleeding", 1.2)
+	if not isRunning then
+		return
+	end
+	
+	if lastWarning ~= "bleeding" then
+		lastWarning = "bleeding"
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.internal_bleeding", 1.2)	
+	end
+	
+	HEV_Health(4.0)
+end
+
+-- Chemical
+function HEV_Chem()
+	if not isRunning then
+		return
+	end
+	
+	if lastWarning ~= "chem" then
+		lastWarning = "chem"
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.boop", 0.3)
+		ScheduleSound("hev_suit.chemical_detected", 1.2)
+	end
 	HEV_Health(4.0)
 end
 
@@ -256,6 +335,10 @@ end
 --==========--
 
 function HEV_Battery()
+	if not isRunning then
+		return
+	end
+	
 	power = power + 25
 	if power >= 100 then
 		power = 100
@@ -281,10 +364,23 @@ local flLastTime = 0.0
 local scheduledCount = 0
 local scheduledSounds = {}
 local scheduledDelays = {}
+local lastHealth = 100
 
-function SoundThink()
+function UpdateFunc()
 	local flTime = Time()
 	
+	local localPlayer = Entities:GetLocalPlayer()
+	local health
+
+	if localPlayer ~= nil then
+		health = localPlayer:GetHealth()
+	end
+	
+	if health - lastHealth < 0 then
+		HEV_Health(0.8)
+	end
+	
+	-- Sound update
 	if scheduledCount > 0 then
 		if flTime - flLastTime >= scheduledDelays[1] then
 			local localPlayer = Entities:GetLocalPlayer()
@@ -296,6 +392,8 @@ function SoundThink()
 		end
 		
 	end
+	
+	lastHealth = health
 	
 	-- Return the amount of time to wait before calling this function again.
 	return 0.1
