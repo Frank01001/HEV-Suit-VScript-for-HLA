@@ -1,6 +1,6 @@
---=========================================================--
--- Hazardous Environments Vehicle Mark IV Suit HL:A Script --
---=========================================================--
+--======================================================================--
+-- Hazardous Environments Vehicle Mark IV Suit HL:A Script :: Frank01001--
+--======================================================================--
 
 -- Version 1.0 :: Basic implementation. Still waiting for VScript documentation on UI
 
