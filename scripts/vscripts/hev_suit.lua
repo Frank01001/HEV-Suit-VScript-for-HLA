@@ -10,7 +10,6 @@
 local isRunning = false
 local power = 0
 local lastWarning = ""
-local attacker
 
 --=============================
 -- Spawn is called by the engine whenever a new instance of an entity is created.  
@@ -22,14 +21,7 @@ function Spawn()
 	ListenToGameEvent('player_health_pen_used', HEV_Antidote, self)
 	ListenToGameEvent('player_grabbed_by_barnacle', HEV_MajLaceration, self)
 	
-	
-	
 	flLastTime = Time()
-end
-
-function Active()
-	local chair = Entities:FindByClassname(nil, "prop_physics")
-	IncludeScript("player_damage_test.lua", chair)
 end
 
 -- Call when the suit is worn
