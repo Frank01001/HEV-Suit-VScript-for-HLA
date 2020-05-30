@@ -1,0 +1,56 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+    hev_suit.bootup =
+    {
+        type = "hlvr_default_3d"
+        volume = 1.000000
+        use_hrtf = 1.000000
+        vsnd_files = 
+        [
+            "sounds/hev_suit_bootup.vsnd",
+        ]
+    }
+	hev_suit.ammo_depleted	=
+    {
+        type = "hlvr_default_3d"
+        volume = 1.000000
+        use_hrtf = 1.000000
+        vsnd_files = 
+        [
+            "sounds/ammo_depleted.vsnd",
+        ]
+    }
+	hev_suit.geiger_custom1	=
+    {
+        type = "hlvr_default_3d"
+        volume = 1.000000
+        use_hrtf = 1.000000
+        vsnd_files = 
+        [
+            "sounds/player/geiger1.vsnd",
+			"sounds/player/geiger2.vsnd",
+        ]
+    }
+	hev_suit.geiger_custom2	=
+    {
+        type = "hlvr_default_3d"
+        volume = 1.000000
+        use_hrtf = 1.000000
+        vsnd_files = 
+        [
+            "sounds/player/geiger2.vsnd",
+			"sounds/player/geiger3.vsnd",
+        ]
+    }
+	hev_suit.flashlight	=
+    {
+        type = "hlvr_default_3d"
+        volume = 1.000000
+        use_hrtf = 1.000000
+        vsnd_files = 
+        [
+            "sounds/items/flashlight1.vsnd",
+        ]
+    }
+	
+}
