@@ -2,7 +2,7 @@
 -- Hazardous Environments Vehicle Mark IV Suit HL:A Script :: by Frank01001 --
 --==========================================================================--
 
--- Version 1.2 :: Added death sounds and ammo depleted
+-- Version 1.3 :: Fixed health sounds and death
 
 --=========--
 -- General --
@@ -74,23 +74,23 @@ function HEV_Health(delay)
 	end
 	
 	if health <= 6 and lastWarning ~= "health_death" then
-		ScheduleSound("hev_suit.beep", 0.3 + delay)
-		ScheduleSound("hev_suit.beep", 0.3)
-		ScheduleSound("hev_suit.beep", 0.3)
+		ScheduleSound("Midi.BeepTestSingle", 0.3 + delay)
+		ScheduleSound("Midi.BeepTestSingle", 0.3)
+		ScheduleSound("Midi.BeepTestSingle", 0.3)
 		ScheduleSound("hev_suit.near_death", 1.4)
 		lastWarning = "health_death"
 		return
-	elseif health <= 30 and lastWarning ~= "health_critical" then
-		ScheduleSound("hev_suit.beep", 0.3 + delay)
-		ScheduleSound("hev_suit.beep", 0.3)
-		ScheduleSound("hev_suit.beep", 0.3)
+	elseif health <= 30 and lastWarning ~= "health_critical" and lastWarning ~= "health_death" then
+		ScheduleSound("Midi.BeepTestSingle", 0.3 + delay)
+		ScheduleSound("Midi.BeepTestSingle", 0.3)
+		ScheduleSound("Midi.BeepTestSingle", 0.3)
 		ScheduleSound("hev_suit.health_critical", 0.8)
 		ScheduleSound("hev_suit.seek_medic", 3.0)
 		lastWarning = "health_critical"
 		return
-	elseif health <= 50 and lastWarning ~= "health_dropping" and lastWarning ~= "health_critical" then
-		ScheduleSound("hev_suit.beep", 0.3 + delay)
-		ScheduleSound("hev_suit.beep", 0.3)
+	elseif health <= 50 and lastWarning ~= "health_dropping" and lastWarning ~= "health_critical" and lastWarning ~= "health_death" then
+		ScheduleSound("Midi.BeepTestSingle", 0.3 + delay)
+		ScheduleSound("Midi.BeepTestSingle", 0.3)
 		ScheduleSound("hev_suit.health_dropping", 1.0)
 		lastWarning = "health_dropping"
 		return
@@ -377,13 +377,8 @@ end
 
 -- On User Death
 function HEV_Death()
-	ScheduleSound("hev_suit.beep", 0.3)
-	ScheduleSound("hev_suit.beep", 0.3)
-	ScheduleSound("hev_suit.beep", 0.3)
-	ScheduleSound("hev_suit.beep", 0.3)
-	ScheduleSound("hev_suit.beep", 0.3)
-	ScheduleSound("hev_suit.beep", 0.3)
-	ScheduleSound("hev_suit.flatline", 0.5)
+	local localPlayer = Entities:GetLocalPlayer()
+	EmitSoundOn("hev_suit.flatline", localPlayer)
 end
 
 --==========--
@@ -449,7 +444,7 @@ function UpdateFunc()
 	end
 	
 	-- Sound update
-	if scheduledCount > 0 then
+	if isRunning and scheduledCount > 0 then
 		
 		if flTime - flLastTime >= scheduledDelays[1] then
 			local localPlayer = Entities:GetLocalPlayer()
