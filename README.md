@@ -1,5 +1,5 @@
 # HEV-Suit-VScript-for-HLA
-A VScript for HEV Suit sounds in Half Life Alyx. Version 1.0
+A VScript for HEV Suit sounds in Half Life Alyx.
 
 Hello. This is a tutorial on how to include the HEV Suit sounds vscript in your Half Life: Alyx custom maps. Download scripts “hev_suit.lua” and “radiation_field.lua” and place them in the /…/Half Life Alyx/game/hlvr_addons/your_addon/scripts/vscripts/. If the scripts and vscripts folder don’t exist, create them.
 
