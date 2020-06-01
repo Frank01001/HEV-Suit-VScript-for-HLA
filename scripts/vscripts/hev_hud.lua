@@ -25,6 +25,8 @@ function Activate()
 	-- Look for the Indicator entities
 	rad_indicator = Entities:FindByName(nil, "HEV_UI_Radiation")
 	shock_indicator = Entities:FindByName(nil, "HEV_UI_Shock")
+	biohaz_indicator = Entities:FindByName(nil, "HEV_UI_Biohazard")
+	heat_indicator = Entities:FindByName(nil, "HEV_UI_Heat")
 
 	-- Set update function
 	thisEntity:SetContextThink(nil, UpdateHud, 0)
@@ -37,9 +39,9 @@ function UpdateHud()
 		-- Oscillate fading between 10 and 255 alpha values
 		alphaBuffer = GetIndicatorAlpha(current_indicator)
 		if alphaBuffer <= 10 then
-			trend = 1
+			trend = 3
 		elseif alphaBuffer >= 245 then
-			trend = -1
+			trend = -3
 		end
 		
 		SetIndicatorAlpha(current_indicator, alphaBuffer + trend)
@@ -69,7 +71,7 @@ function GetIndicatorAlpha(name)
 	elseif name == "biohazard" then
 		return biohaz_indicator:GetRenderAlpha()
 	elseif name == "heat" then
-		returnheat_indicator:GetRenderAlpha()
+		return heat_indicator:GetRenderAlpha()
 	end
 end
 
