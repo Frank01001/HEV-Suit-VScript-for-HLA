@@ -153,7 +153,6 @@ function HEV_Radiation()
 	if not isRunning then
 		return
 	end
-	--todo implement geiger counter
 	
 	local localPlayer = Entities:GetLocalPlayer()
 	local health
