@@ -23,6 +23,8 @@ local text_suit_up, text_suit_down
 -- Show off paths 
 local text_paths
 
+local parenter
+
 -- Table of startup messages
 local startup_messages = {"H.E.V. (Hazardous Enviroments Vehicle) Mark IV", --title
 						  "OS V4.2.124 firmware v0.8 2006-7", -- subtitle
@@ -115,35 +117,38 @@ function UpdateText()
 			text_bottom:SetMessage(startup_messages[4].."\n\n"..startup_messages[5].."\n"..startup_messages[6])
 			
 		elseif bootup_sequence_status == 7 then 
-			text_paths:SetMessage(startup_messages[3].."\n\n"..paths[1].."\n"..paths[2].."\n"..paths[3].."\n"..paths[4])
+			text_paths:SetMessage(startup_messages[3].."\n\n"..paths[2].."\n"..paths[3].."\n"..paths[4])
 			text_bottom:SetMessage(startup_messages[4].."\n\n"..startup_messages[5].."\n"..startup_messages[6].."\n"..startup_messages[7])
 			
 		elseif bootup_sequence_status == 8 then 
-			text_paths:SetMessage(startup_messages[3].."\n\n"..paths[1].."\n"..paths[2].."\n"..paths[3].."\n"..paths[4].."\n"..paths[5])
+			text_paths:SetMessage(startup_messages[3].."\n\n"..paths[3].."\n"..paths[4].."\n"..paths[5])
 			suit_model:SetOrigin(text_suit_up:GetOrigin() - Vector(0.0, 0.0, 5.0))
 			text_suit_up:SetMessage(startup_messages[8])
 			
 		elseif bootup_sequence_status == 9 then 
-			text_paths:SetMessage(startup_messages[3].."\n\n"..paths[1].."\n"..paths[2].."\n"..paths[3].."\n"..paths[4].."\n"..paths[5].."\n"..paths[6])
+			text_paths:SetMessage(startup_messages[3].."\n\n"..paths[4].."\n"..paths[5].."\n"..paths[6])
 			text_suit_down:SetMessage(startup_messages[9])
 			
 		elseif bootup_sequence_status == 10 then 
-			text_paths:SetMessage(startup_messages[3].."\n\n"..paths[1].."\n"..paths[2].."\n"..paths[3].."\n"..paths[4].."\n"..paths[5].."\n"..paths[6].."\n"..paths[7])
+			text_paths:SetMessage(startup_messages[3].."\n\n"..paths[5].."\n"..paths[6].."\n"..paths[7])
 			text_suit_down:SetMessage(startup_messages[9].."\n"..startup_messages[10])
 			
 		elseif bootup_sequence_status == 11 then 
+			text_paths:SetMessage(startup_messages[3].."\n\n"..paths[6].."\n"..paths[7].."\n"..paths[1])
 			text_suit_down:SetMessage(startup_messages[9].."\n"..startup_messages[10].."\n"..startup_messages[11])
 			
-		elseif bootup_sequence_status == 12 then 
+		elseif bootup_sequence_status == 12 then
+			text_paths:SetMessage(startup_messages[3].."\n\n"..paths[7].."\n"..paths[1].."\n"..paths[2])
 			text_suit_down:SetMessage(startup_messages[9].."\n"..startup_messages[10].."\n"..startup_messages[11].."\n"..startup_messages[12])
 			
 		elseif bootup_sequence_status == 13 then 
 			text_suit_up:SetMessage(startup_messages[13])
-			
+			text_paths:SetMessage("Could not connect to the Black Mesa Network....\n\nTelemetry disabled.")
 		elseif bootup_sequence_status >= 14 and bootup_sequence_status <= 32 then 
 			text_bottom:SetMessage(startup_messages[bootup_sequence_status])
 		elseif bootup_sequence_status == 33 then 
 			text_suit_down:SetMessage(startup_messages[33])
+			text_paths:SetMessage(startup_messages[33])
 		end
 	
 	-- End of sequence, hide everything
@@ -154,7 +159,7 @@ function UpdateText()
 		text_paths:SetMessage("")
 		text_subtitle:SetMessage("")
 		text_title:SetMessage("")
-		suit_model:SetOrigin(suit_model:GetOrigin() - Vector(0.0, 0.0, 1024))
+		suit_model:SetOrigin(suit_model:GetOrigin() - Vector(0.0, 0.0, 1024.0))
 	end
 	
 	if bootup_sequence_status > 0 and bootup_sequence_status <= 37 then
