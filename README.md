@@ -1,6 +1,13 @@
 # HEV-Suit-VScript-for-HLA
 A VScript for HEV Suit sounds in Half Life Alyx.
 
+## WARNING:
+The script in this repository is outdated with respect to the one available on the steam workshop. That one uses code from the original Half Life ported to LUA. Since I do not have rights over that code, I did not publish it on my repository, but you can read it by extracting it from the vpk archive with any Source 2 extractor.
+
+Unfortunately, development for the mod was shelved since Valve stopped updating the tools and documentation, making the resolution of certain major issues impossible.
+
+______________________________________________________________________________________
+
 Hello. This is a tutorial on how to include the HEV Suit sounds vscript in your Half Life: Alyx custom maps. Download scripts “hev_suit.lua” and “radiation_field.lua” and place them in the /…/Half Life Alyx/game/hlvr_addons/your_addon/scripts/vscripts/. If the scripts and vscripts folder don’t exist, create them.
 
 Some sounds are not included in the game (complete bootup sequence and ammo_depleted) while others, like the Geiger sounds, are included in the game but are included in a new soundevent file for easier use. Create a new soundevent (I called it hev_moresounds.vsndevts) and put it in /Half Life Alyx/common/hlvr_addons/your_addon/soundevents/ (create folder if missing). You can add the bootup and ammo_depleted sound yourself if you want them. (Ammo depleted is not currently working in the script anyway). After that, go in Asset Browser and select your sound event file, right click and select Full Recompile. My soundevent file is included in the soundevent folder of this repository, as are the extra sounds.
